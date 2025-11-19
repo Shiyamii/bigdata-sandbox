@@ -1,12 +1,9 @@
 version: '3.8'
 
 services:
-  bigdata:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  bigdata-sandbox:
+    image: shiyamiii/bigdata-sandbox
     container_name: bigdata
-
     ports:
       - "9870:9870"
       - "9864:9864"
