@@ -6,6 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: bigdata
+    volumes:
+        - ./kv/examples:/opt/kvstore/examples
+
 
     ports:
       - "9870:9870"

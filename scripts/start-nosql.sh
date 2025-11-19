@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Starting Oracle NoSQL KVStore..."
-nohup java -jar $KVHOME/lib/kvstore.jar kvlite -secure-config disable -port 5000 > /tmp/kvstore.log 2>&1 &
+nohup java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar kvlite -secure-config disable -root $KVROOT > kvstore.log 2>&1 &
 echo "KVStore started."
