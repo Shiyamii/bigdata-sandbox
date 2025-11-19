@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    openjdk-8-jdk wget curl net-tools nano python3 python3-pip \
+    openjdk-11-jdk wget curl net-tools nano python3 python3-pip \
     supervisor zookeeperd \
     && apt-get clean
 
@@ -41,10 +41,10 @@ ENV PATH=$PATH:$HIVE_HOME/bin
 # -----------------------
 ENV SQOOP_VERSION=1.4.7
 
-RUN wget https://downloads.apache.org/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-3.2.0.tar.gz \
- && tar -xzf sqoop-${SQOOP_VERSION}.bin__hadoop-3.2.0.tar.gz -C /opt \
- && mv /opt/sqoop-${SQOOP_VERSION}.bin__hadoop-3.2.0 /opt/sqoop \
- && rm sqoop-${SQOOP_VERSION}.bin__hadoop-3.2.0.tar.gz
+RUN wget https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz  \
+ && tar -xzf sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz -C /opt \
+ && mv /opt/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0 /opt/sqoop \
+ && rm sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz
 
 ENV SQOOP_HOME=/opt/sqoop
 ENV PATH=$PATH:$SQOOP_HOME/bin
@@ -52,7 +52,7 @@ ENV PATH=$PATH:$SQOOP_HOME/bin
 # -----------------------
 # Kafka
 # -----------------------
-ENV KAFKA_VERSION=3.7.0
+ENV KAFKA_VERSION=3.8.0
 ENV SCALA_VERSION=2.13
 
 RUN wget https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz \
@@ -66,14 +66,16 @@ ENV PATH=$PATH:$KAFKA_HOME/bin
 # -----------------------
 # Oracle NoSQL (KVStore)
 # -----------------------
-ENV KV_VERSION=12.2.5
+ENV KV_VERSION=25.1.13
 
-RUN wget https://download.oracle.com/otn-pub/otn_software/nosql-database/kv-${KV_VERSION}.tar.gz \
- && tar -xzf kv-${KV_VERSION}.tar.gz -C /opt \
- && mv /opt/kv-${KV_VERSION} /opt/kvstore \
- && rm kv-${KV_VERSION}.tar.gz
+RUN wget https://github.com/oracle/nosql/releases/download/v25.1.13/kv-ce-25.1.13.tar.gz \
+ && tar -xzf kv-ce-25.1.13.tar.gz -C /opt \
+ && mv /opt/kv-25.1.13 /opt/kvstore \
+ && rm kv-ce-25.1.13.tar.gz
 
-ENV KV_HOME=/opt/kvstore
+ENV KVHOME=/opt/kvstore
+
+RUN chmod 777 $KVHOME/*
 
 # -----------------------
 # Jupyter Notebook
@@ -92,4 +94,4 @@ EXPOSE 9870 9864 9000 \
        5000 5001 \
        8888
 
-CMD ["/bin/bash"]
+CMD ["tail", "-f", "/dev/null"]

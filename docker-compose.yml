@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  bigdata:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bigdata
+    restart: unless-stopped
+    ports:
+      - "9870:9870"
+      - "9864:9864"
+      - "9000:9000"
+      - "10000:10000"
+      - "10002:10002"
+      - "2181:2181"
+      - "9092:9092"
+      - "5000:5000"
+      - "5001:5001"
+      - "8888:8888"
