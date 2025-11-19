@@ -26,7 +26,7 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 # -----------------------
 # Hive
 # -----------------------
-ENV HIVE_VERSION=3.1.3
+ENV HIVE_VERSION=4.0.1
 
 RUN wget https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
  && tar -xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C /opt \
@@ -81,15 +81,10 @@ ENV KV_HOME=/opt/kvstore
 RUN pip3 install notebook pyhive
 
 # -----------------------
-# Supervisord
+# Scripts pour démarrer chaque service
 # -----------------------
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# -----------------------
-# Init scripts
-# -----------------------
-COPY start-all.sh /usr/local/bin/start-all.sh
-RUN chmod +x /usr/local/bin/start-all.sh
+COPY scripts/ /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
 
 EXPOSE 9870 9864 9000 \
        10000 10002 \
@@ -97,4 +92,4 @@ EXPOSE 9870 9864 9000 \
        5000 5001 \
        8888
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/bin/bash"]
