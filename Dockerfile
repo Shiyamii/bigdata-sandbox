@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     supervisor zookeeperd \
     && apt-get clean
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
 # -----------------------
