@@ -1,10 +1,37 @@
 <?xml version="1.0"?>
 <configuration>
+    <!-- Bind HiveServer2 to 0.0.0.0 inside Docker -->
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+
+    <!-- Execution engine -->
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+
+    <!-- Scratch dir -->
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/tmp/hive_scratch</value>
+    </property>
 
     <!-- JDBC URL pour MySQL -->
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://localhost:3306/hive_metastore?createDatabaseIfNotExist=true</value>
+        <value>jdbc:mysql://0.0.0.0:3306/hive_metastore?createDatabaseIfNotExist=true</value>
     </property>
 
     <property>
@@ -14,12 +41,12 @@
 
     <property>
         <name>javax.jdo.option.ConnectionUserName</name>
-        <value>hiveuser</value>
+        <value>sandbox</value>
     </property>
 
     <property>
         <name>javax.jdo.option.ConnectionPassword</name>
-        <value>hivepass</value>
+        <value>sandbox_password</value>
     </property>
 
     <!-- Metastore settings -->
@@ -36,6 +63,12 @@
     <property>
         <name>hive.metastore.uris</name>
         <value>thrift://localhost:9083</value>
+    </property>
+
+
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/var/bigdata/data/hive-warehouse</value>
     </property>
 
 </configuration>

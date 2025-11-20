@@ -193,8 +193,8 @@ java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar stop -root $KVROOT
 > See [Start Hadoop](#start-hadoop-hdfs--yarn)
 
 ```bash
-nohup hive --service metastore > /var/bigdata/logs/hive_metastore.log 2>&1 &
-nohup hiveserver2 > /var/bigdata/logs/hive_server.log 2>&1 &
+nohup hiveserver2 --hiveconf hive.root.logger=DEBUG,consol > /var/bigdata/logs/hive/hive_server.log 2>&1 &
+nohup hive --service metastore > /var/bigdata/logs/hive/hive_metastore.log 2>&1 &
 ```
 
 ### Connect to Hive
@@ -203,7 +203,7 @@ nohup hiveserver2 > /var/bigdata/logs/hive_server.log 2>&1 &
 > launching HiveServer2 as the Hive service needs some time to become operational.
 
 ```bash
-beeline -u jdbc:hive2://localhost:10000 vagrant
+beeline -u jdbc:hive2://localhost:10000/default -n sandbox
 ```
 
 #### Beeline usage example

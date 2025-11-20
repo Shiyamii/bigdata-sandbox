@@ -73,10 +73,13 @@ ENV HIVE_VERSION=4.0.1
 RUN wget https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
  && tar -xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C /opt \
  && mv /opt/apache-hive-${HIVE_VERSION}-bin /opt/hive \
- && rm apache-hive-${HIVE_VERSION}-bin.tar.gz
+ && rm apache-hive-${HIVE_VERSION}-bin.tar.gz \
+ && mkdir -p /var/bigdata/data/hive-warehouse \
+ && mkdir -p /tmp/hive_scratch
 
 ENV HIVE_HOME=/opt/hive
 ENV HIVE_CONF_DIR=$HIVE_HOME/conf
+ENV HIVE_AUX_JARS_PATH=/opt/hive/lib
 ENV METASTORE_DB=hive_metastore
 ENV METASTORE_USER=hiveuser
 ENV METASTORE_PASS=hivepass
@@ -90,6 +93,9 @@ COPY config/hive/hive-site.xml $HIVE_HOME/conf/
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server default-mysql-client && \
     rm -rf /var/lib/apt/lists/*
+
+RUN curl -L -o $HIVE_HOME/lib/mysql-connector-j-8.3.0.jar \
+    https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar
 
 # -----------------------
 # Sqoop
@@ -171,6 +177,15 @@ RUN printenv | grep -v "no_proxy" | grep -v "HTTP_PROXY" | grep -v "http_proxy" 
 # -----------------------
 COPY config-scripts/patch-hadoop-renice.sh /tmp/patch-hadoop-renice.sh
 RUN bash /tmp/patch-hadoop-renice.sh && rm /tmp/patch-hadoop-renice.sh
+
+
+# -----------------------
+# Expose ports
+# -----------------------
+
+RUN mkdir -p /var/bigdata/logs && \
+    chown -R sandbox:sandbox /var/bigdata && \
+    chmod -R 775 /var/bigdata
 
 # -----------------------
 # Expose ports

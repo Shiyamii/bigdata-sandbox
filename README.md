@@ -43,6 +43,24 @@ docker-compose pull
 docker-compose up -d
 ```
 
+### Connect to the container
+
+#### SSH access
+You can SSH into the container using the following command (from your host machine):
+
+```bat
+ssh -p 2222 sandbox@localhost
+```
+
+The default password for the `sandbox` user is `sandbox`.
+
+#### Docker exec access
+Alternatively, you can open a bash shell inside the running container using:
+```bat
+docker exec -it sandbox bash
+```
+
+
 ### Examples to run
 
 See the [EXAMPLES.md](EXAMPLES.md) file for some basic commands to run Hadoop jobs, start Hive, Kafka and Oracle NoSQL (KVStore).

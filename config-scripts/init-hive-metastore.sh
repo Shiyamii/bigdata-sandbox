@@ -1,14 +1,19 @@
 #!/bin/bash
-# Démarrer MySQL
+# Start MySQL
 service mysql start
 
-# Créer la base Hive Metastore et l'utilisateur
+# Create Hive metastore database and user
 mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS hive_metastore;
-CREATE USER IF NOT EXISTS 'hiveuser'@'%' IDENTIFIED BY 'hivepass';
-GRANT ALL PRIVILEGES ON hive_metastore.* TO 'hiveuser'@'%';
+CREATE USER IF NOT EXISTS 'sandbox'@'%' IDENTIFIED BY 'sandbox_password';
+GRANT ALL PRIVILEGES ON hive_metastore.* TO 'sandbox'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# Initialiser le metastore
-$HIVE_HOME/bin/schematool -dbType mysql -initSchema
+# Disable conflicting logging library
+mkdir -p /opt/hive/disabled-libs
+mv /opt/hive/lib/log4j-slf4j-impl-2.18.0.jar /opt/hive/disabled-libs/
+chmod 777 /opt/hive/conf
+
+# Initialize Hive metastore schema
+/opt/hive/bin/schematool -dbType mysql -initSchema
