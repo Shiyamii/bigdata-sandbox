@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<configuration>
+
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>/opt/hadoop/data/dfs/namenode</value>
+    </property>
+
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data/dfs/datanode</value>
+    </property>
+
+    <!-- Bind Hadoop to 0.0.0.0 inside Docker -->
+    <property>
+        <name>dfs.namenode.http-bind-host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.rpc-bind-host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>0.0.0.0:9867</value>
+    </property>
+
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>0.0.0.0:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>0.0.0.0:9866</value>
+    </property>
+</configuration>

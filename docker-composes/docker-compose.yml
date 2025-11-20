@@ -4,9 +4,16 @@ services:
   bigdata-sandbox:
     image: shiyamiii/bigdata-sandbox
     container_name: bigdata
+    volumes:
+      - ./logs:/var/bigdata/logs
+      - hadoop_namenode:/opt/hadoop/data/dfs/namenode
+      - hadoop_datanode:/opt/hadoop/data/dfs/datanode
     ports:
+      - "2222:22"
       - "9870:9870"
       - "9864:9864"
+      - "8088:8088"
+      - "8042:8042"
       - "9000:9000"
       - "10000:10000"
       - "10002:10002"
@@ -15,3 +22,8 @@ services:
       - "5000:5000"
       - "5001:5001"
       - "8888:8888"
+    tty: true
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:

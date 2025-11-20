@@ -10,8 +10,34 @@ RUN apt-get update && apt-get install -y \
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
+## add sandbox user
+RUN apt-get install -y sudo && \
+    useradd -ms /bin/bash sandbox && \
+    echo "sandbox:sandbox" | chpasswd && \
+    adduser sandbox sudo && \
+    usermod -aG sudo sandbox && \
+    echo "sandbox ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 # -----------------------
-# Hadoop
+# SSH Setup
+# -----------------------
+
+RUN apt-get update && apt-get install -y openssh-server openssh-client sudo \
+    && mkdir /var/run/sshd \
+
+RUN echo "root:root" | chpasswd
+
+RUN su - sandbox -c "ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa" && \
+    su - sandbox -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" && \
+    chmod 600 /home/sandbox/.ssh/authorized_keys
+
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config \
+    && sed -i 's@PermitEmptyPasswords no@PermitEmptyPasswords no@' /etc/ssh/sshd_config
+
+
+# -----------------------
+# Hadoop (with YARN)
 # -----------------------
 ENV HADOOP_VERSION=3.3.6
 
@@ -22,6 +48,22 @@ RUN wget https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/had
 
 ENV HADOOP_HOME=/opt/hadoop
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+ENV HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+ENV YARN_LOG_DIR=/var/log/yarn
+ENV LOG_DIR=/var/log/hadoop
+ENV HDFS_NAMENODE_USER=sandbox
+ENV HDFS_SECONDARYNAMENODE_USER=sandbox
+ENV HDFS_DATANODE_USER=sandbox
+
+COPY config/hadoop/* $HADOOP_CONF_DIR/
+
+RUN mkdir -p $YARN_LOG_DIR && \
+    mkdir -p /var/run/hadoop-yarn && \
+    mkdir -p /opt/hadoop/data/dfs/namenode && \
+    mkdir -p /opt/hadoop/data/dfs/datanode && \
+    chown -R sandbox:sandbox /opt/hadoop/data/dfs && \
+    chmod -R 755 /opt/hadoop/data/dfs
+
 
 # -----------------------
 # Hive
@@ -75,7 +117,7 @@ RUN wget https://github.com/oracle/nosql/releases/download/v25.1.13/kv-ce-25.1.1
 
 ENV KVHOME=/opt/kvstore
 
-RUN chmod 777 $KVHOME/*
+RUN chmod 755 $KVHOME/*
 
 # -----------------------
 # Jupyter Notebook
@@ -83,15 +125,29 @@ RUN chmod 777 $KVHOME/*
 RUN pip3 install notebook pyhive
 
 # -----------------------
-# Scripts pour démarrer chaque service
+# Pass all environment variables to sandbox user
 # -----------------------
-COPY scripts/ /usr/local/bin/
-RUN chmod +x /usr/local/bin/*.sh
+
+RUN printenv | grep -v "no_proxy" | grep -v "HTTP_PROXY" | grep -v "http_proxy" | grep -v "HTTPS_PROXY" | grep -v "https_proxy" | awk '{print "export " $0}'  >> /home/sandbox/.bashrc
+
+
+# -----------------------
+# Modify hadoop-fonctions.sh
+# -----------------------
+COPY config-scripts/patch-hadoop-renice.sh /tmp/patch-hadoop-renice.sh
+RUN bash /tmp/patch-hadoop-renice.sh && rm /tmp/patch-hadoop-renice.sh
+
+# -----------------------
+# Expose ports
+# -----------------------
 
 EXPOSE 9870 9864 9000 \
        10000 10002 \
        2181 9092 \
-       5000 5001 \
-       8888
+       5000 5001 8888\
+       8088 8042 22
 
-CMD ["tail", "-f", "/dev/null"]
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY config-scripts/startup.sh /startup.sh
+RUN chmod 755 /startup.sh
+CMD ["/usr/bin/supervisord", "-n"]
