@@ -4,24 +4,28 @@ services:
   bigdata-sandbox:
     image: shiyamiii/bigdata-sandbox
     container_name: bigdata
+    hostname: localhost
     volumes:
       - ./logs:/var/bigdata/logs
       - hadoop_namenode:/var/bigdata/data/dfs/namenode
       - hadoop_datanode:/var/bigdata/data/dfs/datanode
       - kvstore_data:/var/bigdata/data/kvstore
+      - ./kv/examples:/opt/kvstore/examples # Mount local examples directory if you need them (optional)
+      - mongo_data:/var/bigdata/data/mongodb
     ports:
       - "2222:22"
       - "9870:9870"
       - "9864:9864"
       - "8088:8088"
       - "8042:8042"
+      - "5000:5000"
+      - "5001:5001"
+      - "27017:27017"
       - "9000:9000"
       - "10000:10000"
       - "10002:10002"
       - "2181:2181"
       - "9092:9092"
-      - "5000:5000"
-      - "5001:5001"
       - "8888:8888"
     tty: true
 
@@ -29,3 +33,4 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   kvstore_data:
+  mongo_data:

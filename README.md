@@ -4,7 +4,9 @@
 
 This repository contains a Docker image and a Docker Compose configuration to create a local Big Data sandbox. 
 The provided image installs and prepares several common components of a Big Data ecosystem: 
-SSH, Hadoop (HDFS + YARN), Hive, Sqoop, Kafka, Oracle NoSQL (KVStore) and a Jupyter server.
+SSH, Hadoop (HDFS + YARN), Mongodb, Hive, Sqoop, Kafka, Oracle NoSQL (KVStore) and a Jupyter server.
+
+> For the moment only Hadoop, Mongodb & Oracle NoSQL (KVStore) have been verified to work correctly in this setup.
 
 This README explains what is in the `Dockerfile` and the `docker-compose.yml`, which ports are exposed, 
 which environment variables are available, and how to build / run the service on a local machine (Windows, cmd.exe shell).
@@ -40,6 +42,10 @@ by pulling and running it via Docker Compose:
 docker-compose pull
 docker-compose up -d
 ```
+
+### Examples to run
+
+See the [EXAMPLES.md](EXAMPLES.md) file for some basic commands to run Hadoop jobs, start Hive, Kafka and Oracle NoSQL (KVStore).
 
 ## Exposed ports and expected usage
 

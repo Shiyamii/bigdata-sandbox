@@ -13,7 +13,7 @@ services:
         - hadoop_datanode:/var/bigdata/data/dfs/datanode
         - kvstore_data:/var/bigdata/data/kvstore
         - ./kv/examples:/opt/kvstore/examples # Mount local examples directory if you need them (optional)
-        - mongo_data:/var/bigdata/data/mongodb # Mount local MongoDB data directory (optional)
+        - mongo_data:/var/bigdata/data/mongodb
     ports:
       - "2222:22"
       - "9870:9870"
