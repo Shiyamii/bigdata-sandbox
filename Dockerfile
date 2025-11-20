@@ -76,7 +76,20 @@ RUN wget https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HI
  && rm apache-hive-${HIVE_VERSION}-bin.tar.gz
 
 ENV HIVE_HOME=/opt/hive
+ENV HIVE_CONF_DIR=$HIVE_HOME/conf
+ENV METASTORE_DB=hive_metastore
+ENV METASTORE_USER=hiveuser
+ENV METASTORE_PASS=hivepass
 ENV PATH=$PATH:$HIVE_HOME/bin
+COPY config/hive/hive-site.xml $HIVE_HOME/conf/
+
+# -----------------------
+# MySQL for Hive metastore
+# -----------------------
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server default-mysql-client && \
+    rm -rf /var/lib/apt/lists/*
 
 # -----------------------
 # Sqoop
@@ -171,5 +184,7 @@ EXPOSE 9870 9864 9000 \
 
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY config-scripts/startup.sh /startup.sh
+COPY config-scripts/init-hive-metastore.sh /init-hive-metastore.sh
 RUN chmod 755 /startup.sh
+RUN chmod 755 /init-hive-metastore.sh
 CMD ["/usr/bin/supervisord", "-n"]

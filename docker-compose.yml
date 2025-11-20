@@ -14,6 +14,7 @@ services:
         - kvstore_data:/var/bigdata/data/kvstore
         - ./kv/examples:/opt/kvstore/examples # Mount local examples directory if you need them (optional)
         - mongo_data:/var/bigdata/data/mongodb
+        - hive-metastore:/var/lib/mysql
     ports:
       - "2222:22"
       - "9870:9870"
