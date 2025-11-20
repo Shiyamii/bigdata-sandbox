@@ -6,8 +6,9 @@ services:
     container_name: bigdata
     volumes:
       - ./logs:/var/bigdata/logs
-      - hadoop_namenode:/opt/hadoop/data/dfs/namenode
-      - hadoop_datanode:/opt/hadoop/data/dfs/datanode
+      - hadoop_namenode:/var/bigdata/data/dfs/namenode
+      - hadoop_datanode:/var/bigdata/data/dfs/datanode
+      - kvstore_data:/var/bigdata/data/kvstore
     ports:
       - "2222:22"
       - "9870:9870"
@@ -27,3 +28,4 @@ services:
 volumes:
   hadoop_namenode:
   hadoop_datanode:
+  kvstore_data:

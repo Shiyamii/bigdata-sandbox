@@ -8,12 +8,12 @@
 
     <property>
         <name>dfs.namenode.name.dir</name>
-        <value>/opt/hadoop/data/dfs/namenode</value>
+        <value>/var/bigdata/data/dfs/namenode</value>
     </property>
 
     <property>
         <name>dfs.datanode.data.dir</name>
-        <value>/opt/hadoop/data/dfs/datanode</value>
+        <value>/var/bigdata/data/dfs/datanode</value>
     </property>
 
     <!-- Bind Hadoop to 0.0.0.0 inside Docker -->

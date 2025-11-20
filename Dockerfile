@@ -59,10 +59,10 @@ COPY config/hadoop/* $HADOOP_CONF_DIR/
 
 RUN mkdir -p $YARN_LOG_DIR && \
     mkdir -p /var/run/hadoop-yarn && \
-    mkdir -p /opt/hadoop/data/dfs/namenode && \
-    mkdir -p /opt/hadoop/data/dfs/datanode && \
-    chown -R sandbox:sandbox /opt/hadoop/data/dfs && \
-    chmod -R 755 /opt/hadoop/data/dfs
+    mkdir -p /var/bigdata/data/dfs/namenode && \
+    mkdir -p /var/bigdata/data/dfs/datanode && \
+    chown -R sandbox:sandbox /var/bigdata/data/dfs && \
+    chmod -R 755 /var/bigdata/data/dfs
 
 
 # -----------------------
@@ -116,8 +116,30 @@ RUN wget https://github.com/oracle/nosql/releases/download/v25.1.13/kv-ce-25.1.1
  && rm kv-ce-25.1.13.tar.gz
 
 ENV KVHOME=/opt/kvstore
+ENV PATH=$PATH:$KVHOME/bin
+ENV KVROOT=/var/bigdata/data/kvstore
 
 RUN chmod 755 $KVHOME/*
+
+
+# -----------------------
+# MongoDB
+# -----------------------
+
+ENV MONGO_LOG_DIR=/var/bigdata/log/mongodb
+ENV MONGO_DATA_DIR=/var/bigdata/data/mongodb
+
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | apt-key add - && \
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list && \
+    apt-get update && \
+    apt-get install -y mongodb-org && \
+    apt-get clean && \
+    mkdir -p $MONGO_LOG_DIR && \
+    mkdir -p $MONGO_DATA_DIR && \
+    chown -R sandbox:sandbox /var/bigdata/data/mongodb && \
+    chmod -R 755 /var/bigdata/data/mongodb
+
+ENV PATH=$PATH:/usr/bin/mongod:/usr/bin/mongo
 
 # -----------------------
 # Jupyter Notebook
@@ -143,7 +165,7 @@ RUN bash /tmp/patch-hadoop-renice.sh && rm /tmp/patch-hadoop-renice.sh
 
 EXPOSE 9870 9864 9000 \
        10000 10002 \
-       2181 9092 \
+       2181 9092 27017\
        5000 5001 8888\
        8088 8042 22
 

@@ -49,12 +49,13 @@ Here are the ports published in `docker-compose.yml` (host:container) and their 
 - 9870:9870 — NameNode web UI (HDFS) ✓
 - 9864:9864 — DataNode web UI (HDFS) ✓
 - 8088:8088 — YARN ResourceManager web UI ✓
-- 9000:9000 — HDFS RPC / client port (often used as fs.defaultFS)
+- 9000:9000 — HDFS RPC / client port (often used as fs.defaultFS) ✓
+- 27017:27017 — MongoDB ✓
 - 10000:10000 — HiveServer2 (JDBC/Beeline client connection ns)
 - 10002:10002 — (likely used for an auxiliary or custom Hive/metastore service)
 - 2181:2181 — Zookeeper (coordination for Kafka and KV store)
 - 9092:9092 — Kafka broker
-- 5000:5000 and 5001:5001 — ports used by Oracle NoSQL/KVStore in this image
+- 5000:5000 and 5001:5001 — ports used by Oracle NoSQL/KVStore in this image ✓
 - 8888:8888 — Jupyter Notebook
 
 Note: these usages correspond to the standard packages installed in the image; 

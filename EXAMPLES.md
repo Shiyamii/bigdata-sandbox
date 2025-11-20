@@ -1,20 +1,20 @@
 # Usage examples
 
 
-## MongoDB
+## MongoDB ✓
 
 
 ### Start MongoDB
 
 
 ```bash
-sudo systemctl start mongod
+mongod --dbpath $MONGO_DATA_DIR --bind_ip_all --fork --logpath $MONGO_LOG_DIR/mongodb.log
 ```
 
 ### Connect with MongoDB client
 
 ```bash
-mongo
+mongosh
 ```
 
 #### MongoDB client interaction examples
@@ -29,8 +29,8 @@ show collections;
 // Create a collection
 db.createCollection("persons")
 // Insert documents to persons collection
-db.persons.insert({name: "John Doe", age: 30})
-db.persons.insert({name: "Jane Doe", age: 30})
+db.persons.insertOne({name: "John Doe", age: 30})
+db.persons.insertOne({name: "Jane Doe", age: 30})
 // Query persons collection
 db.persons.find({});
 db.persons.find({name: "John Doe"});
@@ -41,7 +41,7 @@ quit()
 ### Stop MongoDB
 
 ```bash
-sudo systemctl stop mongod
+mongod --dbpath $MONGO_DATA_DIR --shutdown
 ```
 
 
@@ -100,14 +100,14 @@ stop-dfs.sh
 ```
 
 
-## Oracle NoSQL Database (KVStore)
+## Oracle NoSQL Database (KVStore) ✓
 
 
 ### Start KVStore using KVLite utility
 
 ```bash
-nohup java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar kvlite -secure-config disable -root $KVROOT > /var/bigdata/logs/kvstore.log 2>&1 &
-```
+```nohup java -Djava.rmi.server.hostname=localhost -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar kvlite -secure-config disable -root $KVROOT > /var/bigdata/logs/kvstore.log 2>&1 &
+
 
 ### Ping KVStore
 
@@ -116,8 +116,31 @@ java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar ping -host localhost -port 5
 ```
 
 ### Start KVStoreAdminClient
+#### Connect to the KVStoreAdminClient console
 ```bash
 java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -host localhost -port 5000
+```
+
+From now commands will have `kv->` displayed at the beginning of the line.
+
+#### Connect to the database
+```bash
+connect store -name kvstore
+```
+
+#### Show help
+```bash
+help
+```
+
+#### Put a key-value pair
+```bash
+put kv -key /bonjour -value "Bienvenue dans le monde du NoSQL : modele cle valeur"
+```
+
+#### Get a value by key
+```bash
+get kv -key /bonjour
 ```
 
 ### Start SQL Shell
